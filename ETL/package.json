@@ -1,0 +1,13 @@
+{
+  "type": "module",
+  "devDependencies": {
+    "@types/node": "^20.12.8",
+    "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "fs": "^0.0.1-security"
+  },
+  "scripts": {
+    "postinstall": "tsc"
+  }
+}

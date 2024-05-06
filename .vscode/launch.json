@@ -7,14 +7,14 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Launch Program",
-            "runtimeArgs": [
-                "-r",
-                "ts-node/register"
+            "name": "Run unit test",
+            "cwd": "${workspaceFolder}/ETL",
+            "skipFiles": [
+                "<node_internals>/**"
             ],
-            "args": [
-                "${workspaceFolder}/ETL/src/test/Connector/test.ts"
-            ]
+            "program": "${workspaceFolder}/ETL/target/app.js",
+            "args": ["./target/secret.json"],
+            "preLaunchTask": "build"
         }
     ]
 }
