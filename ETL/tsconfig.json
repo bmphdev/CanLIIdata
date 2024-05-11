@@ -9,6 +9,7 @@
     "noUncheckedIndexedAccess": true,
     "moduleResolution": "Node",
     "module": "ES2022",
+    "allowSyntheticDefaultImports": true,
     "lib": [
       "ES2022"
     ]

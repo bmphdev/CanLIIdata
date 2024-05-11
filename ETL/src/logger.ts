@@ -3,7 +3,7 @@ import {PathLike, promises as fs} from "fs"
 type logLevel = "DEBUG" | "INFO" | "WARN" | "ERROR"
 
 export const throwError = (aMessage: string): never => {
-    throw new Error("aMessage")
+    throw new Error(aMessage)
 }
 
 export class Logger {

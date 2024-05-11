@@ -15,6 +15,18 @@
             "program": "${workspaceFolder}/ETL/target/app.js",
             "args": ["./target/secret.json"],
             "preLaunchTask": "build"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Run connected test",
+            "cwd": "${workspaceFolder}/ETL",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/ETL/target/connector.js",
+            "args": ["./target/secret.json"],
+            "preLaunchTask": "build"
         }
     ]
 }
