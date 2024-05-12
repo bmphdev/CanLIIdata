@@ -13,7 +13,7 @@
                 "<node_internals>/**"
             ],
             "program": "${workspaceFolder}/ETL/target/app.js",
-            "args": ["./target/secret.json"],
+            "args": ["./target/settings.json", "./target/secret.json", "--test"],
             "preLaunchTask": "build"
         },
         {
