@@ -27,6 +27,17 @@
             "program": "${workspaceFolder}/ETL/target/connector.js",
             "args": ["./target/secret.json"],
             "preLaunchTask": "build"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Run DB test",
+            "cwd": "${workspaceFolder}/ETL",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/ETL/target/db.js",
+            "preLaunchTask": "build"
         }
     ]
 }
