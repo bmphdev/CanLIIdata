@@ -3,7 +3,19 @@
     // Hover to view descriptions of existing attributes.
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
-    "configurations": [
+    "configurations": [ 
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Run",
+            "cwd": "${workspaceFolder}/ETL",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/ETL/target/app.js",
+            "args": ["./target/settings.json", "./target/secret.json", "onltb"],
+            "preLaunchTask": "build"
+        },
         {
             "type": "node",
             "request": "launch",

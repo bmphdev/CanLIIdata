@@ -1,17 +1,18 @@
 import { Logger } from "./logger.js"
 import { throwError } from "./logger.js"
 import { promises as fs } from "fs"
+import { setTimeout } from "timers/promises"
 
-type apiLang = "en" | "fr"
+export type apiLang = "en" | "fr"
 type databaseInfo = {
     databaseId: string,
     jurisdiction: string,
     name: string,
     url: URL
 }
-type caseInfo = {
+export type caseInfo = {
     databaseId: string,
-    caseId: {en: string},
+    caseId: {en: string} | {fr: string},
     title: string,
     citation: string
 }
@@ -40,6 +41,7 @@ class CanliiApi {
         this.#thisCallId = 0
     }
     #call = async (aPath: string): Promise<any> => {
+        await setTimeout(5000) //Avoid overloading the server
         let myUrl = new URL(aPath, CanliiApi.#baseUrl)
         let myCallId = this.#thisCallId++
         this.#thisLog.info("Call #" + myCallId + ". Calling API with URL: " + myUrl + "...")

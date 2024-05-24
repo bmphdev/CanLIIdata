@@ -18,21 +18,18 @@ class Db<Row extends Object> {
                                                         + ", insertion_date) values ("
                                                         + Object.keys(new (aTableDesc.row as any)()).map((aKey) => ":" + aKey).join(", ")
                                                         + ", :insertion_date)"
-    static #getSelectQuery = (aTableDesc: tableDesc) => "select * from "
-                                                        + aTableDesc.name
     #thisLog: Logger
     #thisDb: Promise<Database>
+    #thisTable: string
     #thisCreateQuery: ISqlite.SqlType
     #thisInsertQuery: ISqlite.SqlType
-    #thisSelectQuery: ISqlite.SqlType
     constructor(aDbFile: string, aLogger: Logger, aTableDesc: tableDesc) {
         this.#thisLog = aLogger
         this.#thisCreateQuery = Db.#getCreateQuery(aTableDesc)
         this.#thisInsertQuery = Db.#getInsertQuery(aTableDesc)
-        this.#thisSelectQuery = Db.#getSelectQuery(aTableDesc)
         this.#thisLog.info("CreateQuery: " + this.#thisCreateQuery)
         this.#thisLog.info("InsertQuery: " + this.#thisInsertQuery)
-        this.#thisLog.info("Select query: " + this.#thisSelectQuery)
+        this.#thisTable = aTableDesc.name
         sqlite3.verbose()
         this.#thisDb = open({filename: aDbFile, driver: sqlite3.Database})
                         .then(async (aDb) => {aDb.on("trace", console.log)
@@ -46,7 +43,21 @@ class Db<Row extends Object> {
         this.#thisLog.debug("Inserting values: " + JSON.stringify(myMapping)) ;
         (await this.#thisDb).run(this.#thisInsertQuery, myMapping)
     }
-    readAll = async () => (await this.#thisDb).all<Row[]>(this.#thisSelectQuery)
+    readAll = async () => (await this.#thisDb).all<Row[]>("select * from " + this.#thisTable)
+    findPartialRecord = async (aField: keyof Row) => (await this.#thisDb).get<Row>("select * from " + this.#thisTable + " where " + aField.toString() + " is null")
+                                                        .then(aRecord => {if (aRecord != undefined) Object.entries(aRecord).forEach(([aKey, aValue]) => {aRecord[(aKey as keyof typeof aRecord)] = JSON.parse(aValue)}) ;
+                                                                            return aRecord})
+    updateRecord = (aField: keyof Row) => (aValue: any) => (aKey: keyof Row) => async (anId: any) => {
+        let myMapping = {
+            ":value": JSON.stringify(aValue),
+            ":id": JSON.stringify(anId)
+        } ;
+        await (await this.#thisDb).run("update "
+                                        + this.#thisTable
+                                        + " set " + aField.toString() + " = :value where " + aKey.toString() + " = :id", myMapping)
+    }
+    isDbEmpty = async () => (await this.#thisDb).get<{cnt: number}>("select count(*) as cnt from " + this.#thisTable)
+                            .then(aCount => (aCount?.cnt ?? 0) == 0 ? true : false)
 }
 
 
