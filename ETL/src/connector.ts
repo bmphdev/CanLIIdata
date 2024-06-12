@@ -41,15 +41,18 @@ class CanliiApi {
         this.#thisCallId = 0
     }
     #call = async (aPath: string): Promise<any> => {
-        await setTimeout(5000) //Avoid overloading the server
+        let tryCalling = (aUrl: URL): Promise<any> => fetch(aUrl)
+                                                        .then(aResponse => aResponse.ok ?
+                                                                            aResponse.json()
+                                                                            : aResponse.status == 502 ?
+                                                                                tryCalling(aUrl)
+                                                                                : Promise.reject(aResponse))
         let myUrl = new URL(aPath, CanliiApi.#baseUrl)
         let myCallId = this.#thisCallId++
         this.#thisLog.info("Call #" + myCallId + ". Calling API with URL: " + myUrl + "...")
+        await setTimeout(1500) //Avoid overloading the server
         myUrl.searchParams.append("api_key", this.#thisApiKey)
-        let myResponse = await fetch(myUrl)
-                            .then((aResponse) => aResponse.ok ? 
-                                                    aResponse.json()
-                                                    : Promise.reject(aResponse.status + " " + aResponse.statusText))
+        let myResponse = await tryCalling(myUrl)
         this.#thisLog.info("Call #" + myCallId + ". Response received. Message length: " + JSON.stringify(myResponse).length + ".")
         this.#thisLog.debug("Call #" + myCallId + ". Message: " + JSON.stringify(myResponse))
         return myResponse
